@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Academic Article Suggestion System</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+
+    <style>
+      #div1 {
+        width: 50%;
+
+        float: left;
+
+        height: 100%;
+      }
+
+      #div2 {
+        width: 50%;
+
+        float: right;
+
+        height: 100%;
+      }
+
+      .btn-like {
+        background-color: transparent;
+        border: none;
+        color: #333;
+        cursor: pointer;
+        font-size: 20px;
+      }
+      .card-title a {
+        text-decoration: none;
+        color: #010e80;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">Academic Article Suggestion System</a>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0"></ul>
+          <div class="d-flex">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="/upload"
+                  >Upload</a
+                >
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="/stats"
+                  >Statistics</a
+                >
+              </li>
+
+              <li class="nav-item dropdown">
+                <a
+                  class="nav-link dropdown-toggle"
+                  href="#"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  {{user}}
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="/profile">My Profile</a></li>
+                  <li><hr class="dropdown-divider" /></li>
+                  <li>
+                    <a class="dropdown-item" href="/logout">Logout</a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <div class="container" style="padding-top: 15px">
+      <form action="/search" method="GET">
+        <div class="input-group">
+          <input
+            type="text"
+            class="form-control"
+            name="title"
+            placeholder="Makale Adı"
+          />
+          <input
+            type="text"
+            class="form-control"
+            name="keyword"
+            placeholder="İçerik"
+          />
+          <button class="btn btn-outline-primary" type="submit">🔍</button>
+        </div>
+      </form>
+
+      <div id="div1" class="container" style="padding-top: 30px">
+        {% for article0 in articles0 %}
+        <div class="card" style="margin-bottom: 15px">
+          <div class="card-header">
+            <h5 class="card-title">
+              <a href="/article/{{ article0._id }}" target="_blank">
+                {{ article0.title }}
+                <small
+                  ><i>
+                    <font color="green">
+                      {{ '%.4f' | format(article0.similarity) }}</font
+                    ></i
+                  ></small
+                >
+              </a>
+            </h5>
+          </div>
+          <div class="card-body">
+            <p class="card-text">{{ article0.abstract }}</p>
+            <div class="btn-group" role="group" aria-label="Basic example">
+              <a
+                onclick="reactPost('{{ article0._id }}','0','like')"
+                class="{{ 'btn btn-primary' if article0.react == 'like' else 'btn btn-outline-primary' }}"
+                >👍🏻</a
+              >
+              <a
+                onclick="reactPost('{{ article0._id }}','0','dislike')"
+                class="{{ 'btn btn-primary' if article0.react == 'dislike' else 'btn btn-outline-primary' }}"
+                >👎🏻</a
+              >
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <div id="div2" class="container" style="padding-top: 30px">
+        {% for article1 in articles1 %}
+        <div class="card" style="margin-bottom: 15px">
+          <div class="card-header">
+            <h5 class="card-title">
+              <a href="/article/{{ article1._id }}" target="_blank">
+                {{ article1.title }}
+                <small
+                  ><i>
+                    <font color="green">
+                      {{ '%.4f' | format(article1.similarity) }}</font
+                    ></i
+                  ></small
+                >
+              </a>
+            </h5>
+          </div>
+          <div class="card-body">
+            <p class="card-text">{{ article1.abstract }}</p>
+            <div class="btn-group" role="group" aria-label="Basic example">
+              <a
+                onclick="reactPost('{{ article1._id }}','1','like')"
+                class="{{ 'btn btn-primary' if article1.react == 'like' else 'btn btn-outline-primary' }}"
+                >👍🏻</a
+              >
+              <a
+                onclick="reactPost('{{ article1._id }}','1','dislike')"
+                class="{{ 'btn btn-primary' if article1.react == 'dislike' else 'btn btn-outline-primary' }}"
+                >👎🏻</a
+              >
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <script
+      src="https://code.jquery.com/jquery-3.7.1.js"
+      integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+      crossorigin="anonymous"
+    ></script>
+
+    <script>
+      function reactPost(articleId, model, react) {
+        var likeButton, dislikeButton;
+
+        if (model == "0") {
+          likeButton = $(
+            "[onclick=\"reactPost('" + articleId + "','0','like')\"]"
+          );
+          dislikeButton = $(
+            "[onclick=\"reactPost('" + articleId + "','0','dislike')\"]"
+          );
+        } else if (model == "1") {
+          likeButton = $(
+            "[onclick=\"reactPost('" + articleId + "','1','like')\"]"
+          );
+          dislikeButton = $(
+            "[onclick=\"reactPost('" + articleId + "','1','dislike')\"]"
+          );
+        }
+
+        if (react === "like") {
+          if (likeButton.hasClass("btn-primary")) {
+            likeButton.removeClass("btn-primary");
+          } else {
+            likeButton.addClass("btn-primary");
+            dislikeButton.removeClass("btn-primary");
+            dislikeButton.addClass("btn btn-outline-primary");
+          }
+        } else if (react === "dislike") {
+          if (dislikeButton.hasClass("btn-primary")) {
+            dislikeButton.removeClass("btn-primary");
+          } else {
+            dislikeButton.addClass("btn-primary");
+            likeButton.removeClass("btn-primary");
+            likeButton.addClass("btn btn-outline-primary");
+          }
+        }
+
+        $.ajax({
+          type: "POST",
+          url: "/reaction/" + articleId + "/" + model + "/" + react,
+        });
+      }
+    </script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>

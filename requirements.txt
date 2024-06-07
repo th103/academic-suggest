@@ -1,0 +1,10 @@
+fasttext==0.9.2
+fasttext_wheel==0.9.2
+Flask==3.0.3
+numpy==1.26.4
+pymongo==4.7.3
+Requests==2.32.3
+scipy==1.13.1
+spacy==3.7.5
+torch==2.3.1
+transformers==4.41.2
