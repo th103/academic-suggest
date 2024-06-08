@@ -9,8 +9,8 @@ The app was coded in a tight deadline and may not represent the best practices.
 Python 3.9 and MongoDB required
 
 ```
-$ git clone https://github.com/th103/article-suggest
-$ cd article-suggest
+$ git clone https://github.com/th103/academic-suggest
+$ cd academic-suggest
 $ pip install -r requirements.txt
 $ python -m spacy download en_core_web_sm
 ```
@@ -35,4 +35,4 @@ $ python app.py
 
 https://github.com/allenai/scibert
 
-https://github.com/facebookresearch/fastText/blob/main/LICENSE
+https://github.com/facebookresearch/fastText
